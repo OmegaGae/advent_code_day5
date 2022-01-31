@@ -10,6 +10,7 @@
 
 # Created by : OmegaGae
 
+from itertools import count
 from lib.packages.editfiles import editfile as edit
 import numpy as np
 
@@ -27,12 +28,12 @@ def format_data_input(lines: list):
         filter_for_end.append(line.rstrip().split("->")[1].split(","))
         filter_for_start.append(line.rstrip().split("->")[0].split(","))
         s_position = [
-            float(filter_for_start[i][e])
+            int(filter_for_start[i][e])
             for i in range(len(filter_for_start))
             for e in range(2)
         ]
         e_position = [
-            float(filter_for_end[i][e])
+            int(filter_for_end[i][e])
             for i in range(len(filter_for_end))
             for e in range(2)
         ]
@@ -52,10 +53,10 @@ class Plan:
 
         self._nber_of_row = max_y
         self._nber_of_cols = max_x
-        self.map = self._matrice()
+        self._matrice()
 
     def _matrice(self):
-        return np.zeros((self._nber_of_row, self._nber_of_cols))
+        self.map = np.zeros((self._nber_of_row, self._nber_of_cols))
 
     def find_interval_points(self, x1: float, y1: float, x2: float, y2: float):
 
@@ -139,14 +140,19 @@ class Plan:
 
         return
 
-    def draw_line(self, starting_point: tuple, end_point: tuple):
+    def draw_line(self, starting_points: tuple, end_points: tuple, pts_nb: int):
+        i = 0
+        while i < pts_nb:
+            self.map[starting_points[i][1], starting_points[i][0]] += 1
+            self.map[end_points[i][1], end_points[i][0]] += 1
 
-        self.map[starting_point[1], starting_point[0]] += 1
-        self.map[end_point[1], end_point[0]] += 1
-
-        self.find_interval_points(
-            starting_point[0], starting_point[1], end_point[0], end_point[1]
-        )
+            self.find_interval_points(
+                starting_points[i][0],
+                starting_points[i][1],
+                end_points[i][0],
+                end_points[i][1],
+            )
+            i += 1
 
     def overlap_lines(self):
         """
@@ -156,26 +162,42 @@ class Plan:
         return sum([count + 1 for plan_y in self.map for x in plan_y if x > 1])
 
 
-def higher_points():
+def higher_points(start_points: list, end_points: list):
     """
     Find the higher point from input it will be use by Plan in init
     """
+    x_value_from_start_pts = [fixlist[0] for fixlist in start_points]
+    x_value_from_end_pts = [fixlist[0] for fixlist in end_points]
+
+    y_value_from_start_pts = [fixlist[1] for fixlist in start_points]
+    y_value_from_end_pts = [fixlist[1] for fixlist in end_points]
+
+    return int(max(x_value_from_start_pts + x_value_from_end_pts) + 1), int(
+        max(y_value_from_start_pts + y_value_from_end_pts) + 1
+    )
 
 
-def main(start_point: list, end_point: list):
+def counter(points: list):
+    return len(points)
+
+
+def main(start_points: list, end_points: list):
     """
     code to be exe
     """
     # Call higher_point output will be use for Plan
+    max_x, max_y = higher_points(start_points, end_points)
     # Create a empty field which have the same size as input
-    field_hydrothermal = Plan()
+    field_hydrothermal = Plan(max_x, max_y)
     # Draw the lines on the field --> loop
+    field_hydrothermal.draw_line(start_points, end_points, counter(start_points))
     # count the overlapping lines and return count
+    return field_hydrothermal.overlap_lines()
 
 
 if __name__ == "__main__":
 
     input_dum = edit.Editfile("dummy_day5.txt").read()
     print(input_dum)
-    start_point, end_point = format_data_input(input_dum)
-    main(start_point, end_point)
+    start_points, end_points = format_data_input(input_dum)
+    print(main(start_points, end_points))
