@@ -63,77 +63,26 @@ class Plan:
         x = x1
         y = y1
 
-        if x1 > x2 and y1 > y2:
-
-            while (x and y) != (x2 and y2):
-
-                if x == x2 and y != y2:
-                    self.map[y, x] += 1.0
-                    y -= 1
-                elif y == y2 and x != x2:
-                    self.map[y, x] += 1.0
-                    x -= 1
-                elif (x and y) != (x2 and y2):
-                    x -= 1
-                    y -= 1
-
-        elif x1 < x2 and y1 < y2:
-
-            while (x and y) != (x2 and y2):
-
-                if x == x2 and y != y2:
-                    self.map[y, x] += 1.0
-                    y += 1
-                elif y == y2 and x != x2:
-                    self.map[y, x] += 1.0
-                    x += 1
-                elif (x and y) != (x2 and y2):
-                    x += 1
-                    y += 1
-
-        elif x1 < x2 and y1 > y2:
-
-            while (x and y) != (x2 and y2):
-
-                if x == x2 and y != y2:
-                    self.map[y, x] += 1.0
-                    y -= 1
-                elif y == y2 and x != x2:
-                    self.map[y, x] += 1.0
-                    x += 1
-                elif (x and y) != (x2 and y2):
-                    x += 1
-                    y -= 1
-
-        elif x1 > x2 and y1 < y2:
-
-            while (x and y) != (x2 and y2):
-
-                if x == x2 and y != y2:
-                    self.map[y, x] += 1.0
-                    y += 1
-                elif y == y2 and x != x2:
-                    self.map[y, x] += 1.0
-                    x -= 1
-                elif (x and y) != (x2 and y2):
-                    x -= 1
-                    y += 1
-
+        if (x1 != x2) and (y1 != y2):
+            pass
         else:
-
-            while (x or y) != (x2 or y2):
+            while (x != x2) or (y != y2):
 
                 if x == x2 and y < y2:
-                    self.map[y, x] += 1.0
+                    if y != y1:
+                        self.map[y, x] += 1.0
                     y += 1
                 elif x == x2 and y > y2:
-                    self.map[y, x] += 1.0
+                    if y != y1:
+                        self.map[y, x] += 1.0
                     y -= 1
                 elif y == y2 and x < x2:
-                    self.map[y, x] += 1.0
+                    if x != x1:
+                        self.map[y, x] += 1.0
                     x += 1
                 elif y == y2 and x > x2:
-                    self.map[y, x] += 1.0
+                    if x != x1:
+                        self.map[y, x] += 1.0
                     x -= 1
                 else:
                     break
@@ -142,10 +91,16 @@ class Plan:
 
     def draw_line(self, starting_points: tuple, end_points: tuple, pts_nb: int):
         i = 0
+        print(self.map)
+        print("---------initup-------------")
         while i < pts_nb:
-            self.map[starting_points[i][1], starting_points[i][0]] += 1
-            self.map[end_points[i][1], end_points[i][0]] += 1
-
+            if (start_points[i][0] == end_points[i][0]) or (
+                start_points[i][1] == end_points[i][1]
+            ):
+                self.map[starting_points[i][1], starting_points[i][0]] += 1
+                self.map[end_points[i][1], end_points[i][0]] += 1
+            print(self.map)
+            print("---------------------------")
             self.find_interval_points(
                 starting_points[i][0],
                 starting_points[i][1],
@@ -192,6 +147,8 @@ def main(start_points: list, end_points: list):
     # Draw the lines on the field --> loop
     field_hydrothermal.draw_line(start_points, end_points, counter(start_points))
     # count the overlapping lines and return count
+    print(field_hydrothermal.map)
+    print("end--------------")
     return field_hydrothermal.overlap_lines()
 
 
