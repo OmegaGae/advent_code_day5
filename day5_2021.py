@@ -99,8 +99,7 @@ class Plan:
             ):
                 self.map[starting_points[i][1], starting_points[i][0]] += 1
                 self.map[end_points[i][1], end_points[i][0]] += 1
-            print(self.map)
-            print("---------------------------")
+
             self.find_interval_points(
                 starting_points[i][0],
                 starting_points[i][1],
@@ -154,7 +153,7 @@ def main(start_points: list, end_points: list):
 
 if __name__ == "__main__":
 
-    input_dum = edit.Editfile("dummy_day5.txt").read()
+    input_dum = edit.Editfile("input_day5.txt").read()
     print(input_dum)
     start_points, end_points = format_data_input(input_dum)
     print(main(start_points, end_points))
